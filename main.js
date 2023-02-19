@@ -1,4 +1,4 @@
-javascript:(function() {
+(() => {
   document.body.style.setProperty('touch-action', 'pan-y');
 
   simulation.mouseDistance = 75;
