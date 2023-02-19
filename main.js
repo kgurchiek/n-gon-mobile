@@ -262,7 +262,6 @@ javascript:(function() {
   shootJoystickBG.addEventListener('touchstart', handleShootTouchStart);
   shootJoystickBG.addEventListener('touchmove', handleShootTouchMove);
   shootJoystickBG.addEventListener('touchend', handleShootTouchEnd);
-})();
 
 fieldJoystickCircle.addEventListener('touchstart', handleFieldTouchStart);
   fieldJoystickCircle.addEventListener('touchmove', handleFieldTouchMove);
