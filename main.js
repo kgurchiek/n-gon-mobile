@@ -45,6 +45,15 @@ javascript:(function() {
   }
   const fieldJoystickBounds = 50;
 
+  const overlay = document.createElement('div');
+  overlay.style.width = '0%';
+  overlay.style.height = '0%';
+  overlay.style.position = 'absolute';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.zIndex = '9999';
+  document.body.appendChild(overlay);
+  
   const moveJoystickBG = document.createElement('div');
   moveJoystickBG.style.width = '150px';
   moveJoystickBG.style.height = '150px';
@@ -55,7 +64,7 @@ javascript:(function() {
   moveJoystickBG.style.left = `${moveJoystickStartPos.x}px`;
   moveJoystickBG.style.transform = 'translate(-50%, -50%)';
   moveJoystickBG.style.opacity = '0.5';
-  document.body.appendChild(moveJoystickBG);
+  overlay.appendChild(moveJoystickBG);
   
   const moveJoystickCircle = document.createElement('div');
   moveJoystickCircle.style.width = '50px';
@@ -67,7 +76,7 @@ javascript:(function() {
   moveJoystickCircle.style.left = `${moveJoystickStartPos.x}px`;
   moveJoystickCircle.style.transform = 'translate(-50%, -50%)';
   moveJoystickCircle.style.opacity = '0.75';
-  document.body.appendChild(moveJoystickCircle);
+  overlay.appendChild(moveJoystickCircle);
 
   const shootJoystickBG = document.createElement('div');
   shootJoystickBG.style.width = '150px';
@@ -79,7 +88,7 @@ javascript:(function() {
   shootJoystickBG.style.left = `${shootJoystickStartPos.x}px`;
   shootJoystickBG.style.transform = 'translate(-50%, -50%)';
   shootJoystickBG.style.opacity = '0.5';
-  document.body.appendChild(shootJoystickBG);
+  overlay.appendChild(shootJoystickBG);
   
   const shootJoystickCircle = document.createElement('div');
   shootJoystickCircle.style.width = '50px';
@@ -91,7 +100,7 @@ javascript:(function() {
   shootJoystickCircle.style.left = `${shootJoystickStartPos.x}px`;
   shootJoystickCircle.style.transform = 'translate(-50%, -50%)';
   shootJoystickCircle.style.opacity = '0.75';
-  document.body.appendChild(shootJoystickCircle);
+  overlay.appendChild(shootJoystickCircle);
 
   const fieldJoystickBG = document.createElement('div');
   fieldJoystickBG.style.width = '125px';
@@ -103,7 +112,7 @@ javascript:(function() {
   fieldJoystickBG.style.left = `${fieldJoystickStartPos.x}px`;
   fieldJoystickBG.style.transform = 'translate(-50%, -50%)';
   fieldJoystickBG.style.opacity = '0.5';
-  document.body.appendChild(fieldJoystickBG);
+  overlay.appendChild(fieldJoystickBG);
 
   const fieldJoystickCircle = document.createElement('div');
   fieldJoystickCircle.style.width = '30px';
@@ -115,7 +124,7 @@ javascript:(function() {
   fieldJoystickCircle.style.left = `${fieldJoystickStartPos.x}px`;
   fieldJoystickCircle.style.transform = 'translate(-50%, -50%)';
   fieldJoystickCircle.style.opacity = '0.75';
-  document.body.appendChild(fieldJoystickCircle);
+  overlay.appendChild(fieldJoystickCircle);
 
   const pauseButton = document.createElement('div');
   pauseButton.style.width = '30px';
@@ -127,7 +136,7 @@ javascript:(function() {
   pauseButton.style.left = `${window.innerWidth / 2}px`;
   pauseButton.style.transform = 'translate(-50%, -50%)';
   pauseButton.style.opacity = '0.75';
-  document.body.appendChild(pauseButton);
+  overlay.appendChild(pauseButton);
   
   var touches = [];
   var isDraggingMove = false;
