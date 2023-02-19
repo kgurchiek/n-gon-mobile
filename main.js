@@ -1,3 +1,1 @@
-(() => {
-  alert('test');
-})();
+alert('test');
