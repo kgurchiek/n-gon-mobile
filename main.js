@@ -27,6 +27,19 @@ javascript:(function() {
     simulation.mouseInGame.y = (simulation.mouse.y - canvas.height2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.height2 - m.transY;
   }
 
+  function setCrosshair() {
+    var mCanvasPos = {
+      x: ((m.pos.x + m.transX - canvas.width2) /  simulation.edgeZoomOutSmooth) * simulation.zoom + canvas.width2,
+      y: simulation.mouse.y = ((m.pos.y + m.transY - canvas.height2) /  simulation.edgeZoomOutSmooth) * simulation.zoom + canvas.height2
+    }
+
+    simulation.mouse.x = mCanvasPos.x + Math.cos(simulation.mouseAngle) * simulation.mouseDistance;
+    simulation.mouse.y = mCanvasPos.y + Math.sin(simulation.mouseAngle) * simulation.mouseDistance;
+    
+    simulation.mouseInGame.x = (simulation.mouse.x - canvas.width2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.width2 - m.transX;
+    simulation.mouseInGame.y = (simulation.mouse.y - canvas.height2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.height2 - m.transY;
+  }
+
   const moveJoystickStartPos = {
     x: window.innerWidth / 5,
     y: window.innerHeight * 0.8
@@ -219,7 +232,6 @@ javascript:(function() {
 
   const handleShootTouchMove = (e) => {
     if (isDraggingShoot) {
-      input.fire = true;
       const currentPosition = {
         x: e.touches[touches.indexOf("shoot")].clientX,
         y: e.touches[touches.indexOf("shoot")].clientY
@@ -239,12 +251,13 @@ javascript:(function() {
       
       simulation.mouseAngle = angle;
       simulation.mouseDistance = distanceFromCenter;
+      setCrosshair();
+      input.fire = true;
     }
   }
 
   const handleFieldTouchMove = (e) => {
     if (isDraggingField) {
-      input.field = true;
       const currentPosition = {
         x: e.touches[touches.indexOf("field")].clientX,
         y: e.touches[touches.indexOf("field")].clientY
@@ -264,6 +277,8 @@ javascript:(function() {
       
       simulation.mouseAngle = angle;
       simulation.mouseDistance = distanceFromCenter;
+      setCrosshair();
+      input.field = true;
     }
   }
 
