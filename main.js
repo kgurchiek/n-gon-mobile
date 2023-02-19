@@ -48,6 +48,12 @@ javascript:(function() {
   }
   const shootJoystickBounds = 75;
 
+  const fieldJoystickStartPos = {
+    x: window.innerWidth * 9 / 10,
+    y: window.innerHeight * 0.6
+  }
+  const fieldJoystickBounds = 50;
+
   const moveJoystickBG = document.createElement('div');
   moveJoystickBG.style.width = '150px';
   moveJoystickBG.style.height = '150px';
@@ -96,9 +102,34 @@ javascript:(function() {
   shootJoystickCircle.style.opacity = '0.75';
   overlay.appendChild(shootJoystickCircle);
 
+  const fieldJoystickBG = document.createElement('div');
+  fieldJoystickBG.style.width = '125px';
+  fieldJoystickBG.style.height = '125px';
+  fieldJoystickBG.style.borderRadius = '50%';
+  fieldJoystickBG.style.backgroundColor = 'grey';
+  fieldJoystickBG.style.position = 'fixed';
+  fieldJoystickBG.style.top = `${fieldJoystickStartPos.y}px`;
+  fieldJoystickBG.style.left = `${fieldJoystickStartPos.x}px`;
+  fieldJoystickBG.style.transform = 'translate(-50%, -50%)';
+  fieldJoystickBG.style.opacity = '0.5';
+  overlay.appendChild(fieldJoystickBG);
+
+  const fieldJoystickCircle = document.createElement('div');
+  fieldJoystickCircle.style.width = '30px';
+  fieldJoystickCircle.style.height = '30px';
+  fieldJoystickCircle.style.borderRadius = '50%';
+  fieldJoystickCircle.style.backgroundColor = 'black';
+  fieldJoystickCircle.style.position = 'fixed';
+  fieldJoystickCircle.style.top = `${fieldJoystickStartPos.y}px`;
+  fieldJoystickCircle.style.left = `${fieldJoystickStartPos.x}px`;
+  fieldJoystickCircle.style.transform = 'translate(-50%, -50%)';
+  fieldJoystickCircle.style.opacity = '0.75';
+  overlay.appendChild(fieldJoystickCircle);
+  
   var touches = [];
   var isDraggingMove = false;
-  var isDraggingShoot = true;
+  var isDraggingShoot = false;
+  var isDraggingField = false;
   
   const handleMoveTouchStart = (e) => {
     isDraggingMove = true;
@@ -108,6 +139,11 @@ javascript:(function() {
   const handleShootTouchStart = (e) => {
     isDraggingShoot = true;
     touches.push("shoot");
+  };
+
+  const handleFieldTouchStart = (e) => {
+    isDraggingField = true;
+    touches.push("field");
   };
 
   const handleMoveTouchMove = (e) => {
@@ -161,6 +197,31 @@ javascript:(function() {
     }
   }
 
+  const handleFieldTouchMove = (e) => {
+    if (isDraggingField) {
+      input.field = true;
+      const currentPosition = {
+        x: e.touches[touches.indexOf("field")].clientX,
+        y: e.touches[touches.indexOf("field")].clientY
+      };
+      var distanceFromCenter = Math.sqrt((currentPosition.x - fieldJoystickStartPos.x) ** 2 + (currentPosition.y - fieldJoystickStartPos.y) ** 2);
+      const angle = Math.atan2(currentPosition.y - fieldJoystickStartPos.y, currentPosition.x - fieldJoystickStartPos.x);
+      
+      if (distanceFromCenter > fieldJoystickBounds) {
+        currentPosition.x = fieldJoystickStartPos.x + fieldJoystickBounds * Math.cos(angle);
+        currentPosition.y = fieldJoystickStartPos.y + fieldJoystickBounds * Math.sin(angle);
+        
+        distanceFromCenter = fieldJoystickBounds;
+      }
+      
+      fieldJoystickCircle.style.left = `${currentPosition.x}px`;
+      fieldJoystickCircle.style.top = `${currentPosition.y}px`;
+      
+      simulation.mouseAngle = angle;
+      simulation.mouseDistance = distanceFromCenter;
+    }
+  }
+
   const handleMoveTouchEnd = () => {
     isDraggingMove = false;
     touches.splice(touches.indexOf("move"), 1);
@@ -180,6 +241,14 @@ javascript:(function() {
     shootJoystickCircle.style.top = `${shootJoystickStartPos.y}px`;
     shootJoystickCircle.style.left = `${shootJoystickStartPos.x}px`;
   };
+
+  const handleFieldTouchEnd = () => {
+    isDraggingField = false;
+    input.field = false;
+    touches.splice(touches.indexOf("field"), 1)
+    fieldJoystickCircle.style.top = `${fieldJoystickStartPos.y}px`;
+    fieldJoystickCircle.style.left = `${fieldJoystickStartPos.x}px`;
+  };
   
   moveJoystickCircle.addEventListener('touchstart', handleMoveTouchStart);
   moveJoystickCircle.addEventListener('touchmove', handleMoveTouchMove);
@@ -193,4 +262,12 @@ javascript:(function() {
   shootJoystickBG.addEventListener('touchstart', handleShootTouchStart);
   shootJoystickBG.addEventListener('touchmove', handleShootTouchMove);
   shootJoystickBG.addEventListener('touchend', handleShootTouchEnd);
+})();
+
+fieldJoystickCircle.addEventListener('touchstart', handleFieldTouchStart);
+  fieldJoystickCircle.addEventListener('touchmove', handleFieldTouchMove);
+  fieldJoystickCircle.addEventListener('touchend', handleFieldTouchEnd);
+  fieldJoystickBG.addEventListener('touchstart', handleFieldTouchStart);
+  fieldJoystickBG.addEventListener('touchmove', handleFieldTouchMove);
+  fieldJoystickBG.addEventListener('touchend', handleFieldTouchEnd);
 })();
