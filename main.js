@@ -116,12 +116,14 @@ javascript:(function() {
         x: e.touches[touches.indexOf("move")].clientX,
         y: e.touches[touches.indexOf("move")].clientY
       };
-      const distanceFromCenter = Math.sqrt((currentPosition.x - moveJoystickStartPos.x) ** 2 + (currentPosition.y - moveJoystickStartPos.y) ** 2);
+      var distanceFromCenter = Math.sqrt((currentPosition.x - moveJoystickStartPos.x) ** 2 + (currentPosition.y - moveJoystickStartPos.y) ** 2);
       const angle = Math.atan2(currentPosition.y - moveJoystickStartPos.y, currentPosition.x - moveJoystickStartPos.x);
       
       if (distanceFromCenter > moveJoystickBounds) {
         currentPosition.x = moveJoystickStartPos.x + moveJoystickBounds * Math.cos(angle);
         currentPosition.y = moveJoystickStartPos.y + moveJoystickBounds * Math.sin(angle);
+
+        distanceFromCenter = moveJoystickBounds;
       }
       
       moveJoystickCircle.style.left = `${currentPosition.x}px`;
@@ -129,8 +131,8 @@ javascript:(function() {
 
       input.right = angle > -Math.PI * 2/5 && angle < Math.PI * 2/5;
       input.left = angle > Math.PI * 3/5 || angle < -Math.PI * 3/5;
-      input.down = angle > Math.PI / 4 && angle < Math.PI * 3/4;
-      input.up = angle > -Math.PI * 3/4 && angle < -Math.PI / 4;
+      input.down = angle > Math.PI / 4 && angle < Math.PI * 3/4 && distanceFromCenter > moveJoystickBounds / 3;
+      input.up = angle > -Math.PI * 3/4 && angle < -Math.PI / 4 && distanceFromCenter > moveJoystickBounds / 3;
     }
   };
 
@@ -173,6 +175,7 @@ javascript:(function() {
 
   const handleShootTouchEnd = () => {
     isDraggingShoot = false;
+    input.fire = false;
     touches.splice(touches.indexOf("shoot"), 1)
     shootJoystickCircle.style.top = `${shootJoystickStartPos.y}px`;
     shootJoystickCircle.style.left = `${shootJoystickStartPos.x}px`;
