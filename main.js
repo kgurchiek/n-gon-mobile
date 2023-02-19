@@ -1,6 +1,6 @@
 javascript:(function() {
   document.body.style.setProperty('touch-action', 'pan-y');
-
+  
   simulation.mouseDistance = 75;
   simulation.mouseAngle = 0;
   
@@ -26,15 +26,6 @@ javascript:(function() {
     simulation.mouseInGame.x = (simulation.mouse.x - canvas.width2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.width2 - m.transX;
     simulation.mouseInGame.y = (simulation.mouse.y - canvas.height2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.height2 - m.transY;
   }
-  
-  const overlay = document.createElement('div');
-  overlay.style.width = '1%';
-  overlay.style.height = '1%';
-  overlay.style.position = 'absolute';
-  overlay.style.top = '0';
-  overlay.style.left = '0';
-  overlay.style.zIndex = '9999';
-  document.body.appendChild(overlay);
 
   const moveJoystickStartPos = {
     x: window.innerWidth / 5,
@@ -64,7 +55,7 @@ javascript:(function() {
   moveJoystickBG.style.left = `${moveJoystickStartPos.x}px`;
   moveJoystickBG.style.transform = 'translate(-50%, -50%)';
   moveJoystickBG.style.opacity = '0.5';
-  overlay.appendChild(moveJoystickBG);
+  document.body.appendChild(moveJoystickBG);
   
   const moveJoystickCircle = document.createElement('div');
   moveJoystickCircle.style.width = '50px';
@@ -76,7 +67,7 @@ javascript:(function() {
   moveJoystickCircle.style.left = `${moveJoystickStartPos.x}px`;
   moveJoystickCircle.style.transform = 'translate(-50%, -50%)';
   moveJoystickCircle.style.opacity = '0.75';
-  overlay.appendChild(moveJoystickCircle);
+  document.body.appendChild(moveJoystickCircle);
 
   const shootJoystickBG = document.createElement('div');
   shootJoystickBG.style.width = '150px';
@@ -88,7 +79,7 @@ javascript:(function() {
   shootJoystickBG.style.left = `${shootJoystickStartPos.x}px`;
   shootJoystickBG.style.transform = 'translate(-50%, -50%)';
   shootJoystickBG.style.opacity = '0.5';
-  overlay.appendChild(shootJoystickBG);
+  document.body.appendChild(shootJoystickBG);
   
   const shootJoystickCircle = document.createElement('div');
   shootJoystickCircle.style.width = '50px';
@@ -100,7 +91,7 @@ javascript:(function() {
   shootJoystickCircle.style.left = `${shootJoystickStartPos.x}px`;
   shootJoystickCircle.style.transform = 'translate(-50%, -50%)';
   shootJoystickCircle.style.opacity = '0.75';
-  overlay.appendChild(shootJoystickCircle);
+  document.body.appendChild(shootJoystickCircle);
 
   const fieldJoystickBG = document.createElement('div');
   fieldJoystickBG.style.width = '125px';
@@ -112,7 +103,7 @@ javascript:(function() {
   fieldJoystickBG.style.left = `${fieldJoystickStartPos.x}px`;
   fieldJoystickBG.style.transform = 'translate(-50%, -50%)';
   fieldJoystickBG.style.opacity = '0.5';
-  overlay.appendChild(fieldJoystickBG);
+  document.body.appendChild(fieldJoystickBG);
 
   const fieldJoystickCircle = document.createElement('div');
   fieldJoystickCircle.style.width = '30px';
@@ -124,7 +115,19 @@ javascript:(function() {
   fieldJoystickCircle.style.left = `${fieldJoystickStartPos.x}px`;
   fieldJoystickCircle.style.transform = 'translate(-50%, -50%)';
   fieldJoystickCircle.style.opacity = '0.75';
-  overlay.appendChild(fieldJoystickCircle);
+  document.body.appendChild(fieldJoystickCircle);
+
+  const pauseButton = document.createElement('div');
+  pauseButton.style.width = '30px';
+  pauseButton.style.height = '30px';
+  pauseButton.style.borderRadius = '50%';
+  pauseButton.style.backgroundColor = 'black';
+  pauseButton.style.position = 'fixed';
+  pauseButton.style.top = '10%';
+  pauseButton.style.left = `${window.innerWidth / 2}px`;
+  pauseButton.style.transform = 'translate(-50%, -50%)';
+  pauseButton.style.opacity = '0.75';
+  document.body.appendChild(pauseButton);
   
   var touches = [];
   var isDraggingMove = false;
@@ -144,6 +147,39 @@ javascript:(function() {
   const handleFieldTouchStart = (e) => {
     isDraggingField = true;
     touches.push("field");
+  };
+
+  const handlePauseTouchStart = (e) => {
+    if (!simulation.isChoosing && m.alive) {
+      if (simulation.paused) {
+        build.unPauseGrid()
+        simulation.paused = false;
+        document.body.style.cursor = "none";
+        requestAnimationFrame(cycle);
+      } else if (!tech.isNoDraftPause) {
+        simulation.paused = true;
+        build.pauseGrid()
+        document.body.style.cursor = "auto";
+
+        if (tech.isPauseSwitchField || simulation.testing) {
+          document.getElementById("pause-field").addEventListener("click", () => {
+            const energy = m.energy //save current energy
+            if (m.fieldMode === 4 && simulation.molecularMode < 3) {
+              simulation.molecularMode++
+              m.fieldUpgrades[4].description = m.fieldUpgrades[4].setDescription()
+            } else {
+              m.setField((m.fieldMode === m.fieldUpgrades.length - 1) ? 0 : m.fieldMode + 1) //cycle to next field
+              if (m.fieldMode === 4) {
+                simulation.molecularMode = 0
+                m.fieldUpgrades[4].description = m.fieldUpgrades[4].setDescription()
+              }
+            }
+            m.energy = energy //return to current energy
+            document.getElementById("pause-field").innerHTML = `<div class="grid-title"><div class="circle-grid field"></div> &nbsp; ${m.fieldUpgrades[m.fieldMode].name}</div> ${m.fieldUpgrades[m.fieldMode].description}`
+          });
+        }
+      }
+    }
   };
 
   const handleMoveTouchMove = (e) => {
@@ -269,4 +305,6 @@ fieldJoystickCircle.addEventListener('touchstart', handleFieldTouchStart);
   fieldJoystickBG.addEventListener('touchstart', handleFieldTouchStart);
   fieldJoystickBG.addEventListener('touchmove', handleFieldTouchMove);
   fieldJoystickBG.addEventListener('touchend', handleFieldTouchEnd);
+
+  pauseButton.addEventListener('touchstart', handlePauseTouchStart);
 })();
