@@ -3,16 +3,26 @@ javascript:(function() {
   
   simulation.mouseDistance = 75;
   simulation.mouseAngle = 0;
+  simulation.mousePos = {
+    x: 0,
+    y: 0
+  }
+  simulation.customLook = false;
   
   // override usual mouse movement
   simulation.camera = () => {
-    var mCanvasPos = {
-      x: ((m.pos.x + m.transX - canvas.width2) /  simulation.edgeZoomOutSmooth) * simulation.zoom + canvas.width2,
-      y: simulation.mouse.y = ((m.pos.y + m.transY - canvas.height2) /  simulation.edgeZoomOutSmooth) * simulation.zoom + canvas.height2
-    }
+    if (!simulation.customLook) {
+      var mCanvasPos = {
+        x: ((m.pos.x + m.transX - canvas.width2) /  simulation.edgeZoomOutSmooth) * simulation.zoom + canvas.width2,
+        y: simulation.mouse.y = ((m.pos.y + m.transY - canvas.height2) /  simulation.edgeZoomOutSmooth) * simulation.zoom + canvas.height2
+      }
 
-    simulation.mouse.x = mCanvasPos.x + Math.cos(simulation.mouseAngle) * simulation.mouseDistance;
-    simulation.mouse.y = mCanvasPos.y + Math.sin(simulation.mouseAngle) * simulation.mouseDistance;
+      simulation.mouse.x = mCanvasPos.x + Math.cos(simulation.mouseAngle) * simulation.mouseDistance;
+      simulation.mouse.y = mCanvasPos.y + Math.sin(simulation.mouseAngle) * simulation.mouseDistance;
+   } else {
+      simulation.mouse.x = simulation.mousePos.x;
+      simulation.mouse.y = simulation.mousePos.y;
+   }
     
     const dx = simulation.mouse.x / window.innerWidth - 0.5;
     const dy = simulation.mouse.y / window.innerHeight - 0.5;
@@ -28,6 +38,7 @@ javascript:(function() {
   }
 
   function setCrosshair() {
+    simulation.customLook = false;
     var mCanvasPos = {
       x: ((m.pos.x + m.transX - canvas.width2) /  simulation.edgeZoomOutSmooth) * simulation.zoom + canvas.width2,
       y: simulation.mouse.y = ((m.pos.y + m.transY - canvas.height2) /  simulation.edgeZoomOutSmooth) * simulation.zoom + canvas.height2
@@ -40,6 +51,15 @@ javascript:(function() {
     simulation.mouseInGame.y = (simulation.mouse.y - canvas.height2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.height2 - m.transY;
   }
 
+  function setCrosshairPoint() {
+    simulation.customLook = true;
+    simulation.mouse.x = simulation.mousePos.x;
+    simulation.mouse.y = simulation.mousePos.y;
+    
+    simulation.mouseInGame.x = (simulation.mouse.x - canvas.width2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.width2 - m.transX;
+    simulation.mouseInGame.y = (simulation.mouse.y - canvas.height2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.height2 - m.transY;
+  }
+  
   const moveJoystickStartPos = {
     x: window.innerWidth / 5,
     y: window.innerHeight * 0.8
@@ -59,8 +79,8 @@ javascript:(function() {
   const fieldJoystickBounds = 50;
 
   const overlay = document.createElement('div');
-  overlay.style.width = '0%';
-  overlay.style.height = '0%';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
   overlay.style.position = 'absolute';
   overlay.style.top = '0';
   overlay.style.left = '0';
@@ -152,9 +172,20 @@ javascript:(function() {
   overlay.appendChild(pauseButton);
   
   var touches = [];
+  var isDraggingScreen = false;
   var isDraggingMove = false;
   var isDraggingShoot = false;
   var isDraggingField = false;
+
+  const handleScreenTouchStart = (e) => {
+    if (touches.length < e.touches.length) {
+      isDraggingScreen = true;
+      touches.push("screen");
+      simulation.mousePos.x = e.touches[touches.indexOf("screen")].clientX;
+      simulation.mousePos.y = e.touches[touches.indexOf("screen")].clientY;
+      setCrosshairPoint();
+    }
+  };
   
   const handleMoveTouchStart = (e) => {
     isDraggingMove = true;
@@ -202,8 +233,33 @@ javascript:(function() {
         }
       }
     }
+
+    if (simulation.paused) {
+      overlay.removeChild(moveJoystickBG);
+      overlay.removeChild(moveJoystickCircle);
+      overlay.removeChild(shootJoystickBG);
+      overlay.removeChild(shootJoystickCircle);
+      overlay.removeChild(fieldJoystickBG);
+      overlay.removeChild(fieldJoystickCircle);
+    } else {
+      overlay.appendChild(moveJoystickBG);
+      overlay.appendChild(moveJoystickCircle);
+      overlay.appendChild(shootJoystickBG);
+      overlay.appendChild(shootJoystickCircle);
+      overlay.appendChild(fieldJoystickBG);
+      overlay.appendChild(fieldJoystickCircle);
+    }
   };
 
+  const handleScreenTouchMove = (e) => {
+    console.log(touches);
+    if (isDraggingScreen) {
+      simulation.mousePos.x = e.touches[touches.indexOf("screen")].clientX;
+      simulation.mousePos.y = e.touches[touches.indexOf("screen")].clientY;
+      setCrosshairPoint();
+    }
+  };
+  
   const handleMoveTouchMove = (e) => {
     if (isDraggingMove) {
       const currentPosition = {
@@ -282,6 +338,13 @@ javascript:(function() {
     }
   }
 
+  const handleScreenTouchEnd = () => {
+    if (touches.includes("screen")) {
+      isdraggingScreen = false;
+      touches.splice(touches.indexOf("screen"), 1);
+    }
+  };
+
   const handleMoveTouchEnd = () => {
     isDraggingMove = false;
     touches.splice(touches.indexOf("move"), 1);
@@ -309,7 +372,6 @@ javascript:(function() {
     fieldJoystickCircle.style.top = `${fieldJoystickStartPos.y}px`;
     fieldJoystickCircle.style.left = `${fieldJoystickStartPos.x}px`;
   };
-  
   moveJoystickCircle.addEventListener('touchstart', handleMoveTouchStart);
   moveJoystickCircle.addEventListener('touchmove', handleMoveTouchMove);
   moveJoystickCircle.addEventListener('touchend', handleMoveTouchEnd);
@@ -331,4 +393,8 @@ fieldJoystickCircle.addEventListener('touchstart', handleFieldTouchStart);
   fieldJoystickBG.addEventListener('touchend', handleFieldTouchEnd);
 
   pauseButton.addEventListener('touchstart', handlePauseTouchStart);
+
+  document.body.addEventListener('touchstart', handleScreenTouchStart);
+  document.body.addEventListener('touchmove', handleScreenTouchMove);
+  document.body.addEventListener('touchend', handleScreenTouchEnd);
 })();
