@@ -1,4 +1,4 @@
-javascript:(function() {
+ javascript:(function() {
   document.body.style.setProperty('touch-action', 'pan-y');
   
   simulation.mouseDistance = 75;
@@ -170,6 +170,14 @@ javascript:(function() {
   pauseButton.style.transform = 'translate(-50%, -50%)';
   pauseButton.style.opacity = '0.75';
   overlay.appendChild(pauseButton);
+
+  for (var i = 0; i < overlay.children.length; i++) {
+    overlay.children[i].style.setProperty('user-select', 'none');
+    overlay.children[i].style.setProperty('-o-user-select', 'none');
+    overlay.children[i].style.setProperty('-webkit-user-select', 'none');
+    overlay.children[i].style.setProperty('-khtml-user-select', 'none');
+    overlay.children[i].style.setProperty('-moz-user-select', '-moz-none');
+  }
   
   var touches = [];
   var isDraggingScreen = false;
