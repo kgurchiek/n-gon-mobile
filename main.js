@@ -79,8 +79,8 @@ javascript:(function() {
   const fieldJoystickBounds = 50;
 
   const overlay = document.createElement('div');
-  overlay.style.width = '100%';
-  overlay.style.height = '100%';
+  overlay.style.width = '0%';
+  overlay.style.height = '0%';
   overlay.style.position = 'absolute';
   overlay.style.top = '0';
   overlay.style.left = '0';
