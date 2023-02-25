@@ -1,4 +1,4 @@
- javascript:(function() {
+javascript:(function() {
   document.body.style.setProperty('touch-action', 'pan-y');
   
   simulation.mouseDistance = 75;
@@ -170,6 +170,13 @@
   pauseButton.style.transform = 'translate(-50%, -50%)';
   pauseButton.style.opacity = '0.75';
   overlay.appendChild(pauseButton);
+
+  // disable selecting elements
+  overlay.style.setProperty('user-select', 'none');
+  overlay.style.setProperty('-o-user-select', 'none');
+  overlay.style.setProperty('-webkit-user-select', 'none');
+  overlay.style.setProperty('-khtml-user-select', 'none');
+  overlay.style.setProperty('-moz-user-select', '-moz-none');
 
   for (var i = 0; i < overlay.children.length; i++) {
     overlay.children[i].style.setProperty('user-select', 'none');
@@ -393,7 +400,7 @@
   shootJoystickBG.addEventListener('touchmove', handleShootTouchMove);
   shootJoystickBG.addEventListener('touchend', handleShootTouchEnd);
 
-fieldJoystickCircle.addEventListener('touchstart', handleFieldTouchStart);
+  fieldJoystickCircle.addEventListener('touchstart', handleFieldTouchStart);
   fieldJoystickCircle.addEventListener('touchmove', handleFieldTouchMove);
   fieldJoystickCircle.addEventListener('touchend', handleFieldTouchEnd);
   fieldJoystickBG.addEventListener('touchstart', handleFieldTouchStart);
