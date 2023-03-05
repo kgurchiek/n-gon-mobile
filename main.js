@@ -172,18 +172,18 @@ javascript:(function() {
   overlay.appendChild(pauseButton);
 
   // disable selecting elements
-  overlay.style.setProperty('user-select', 'none');
-  overlay.style.setProperty('-o-user-select', 'none');
-  overlay.style.setProperty('-webkit-user-select', 'none');
-  overlay.style.setProperty('-khtml-user-select', 'none');
-  overlay.style.setProperty('-moz-user-select', '-moz-none');
+  document.body.style.setProperty('user-select', 'none');
+  document.body.style.setProperty('-o-user-select', 'none');
+  document.body.style.setProperty('-webkit-user-select', 'none');
+  document.body.style.setProperty('-khtml-user-select', 'none');
+  document.body.style.setProperty('-moz-user-select', '-moz-none');
 
-  for (var i = 0; i < overlay.children.length; i++) {
-    overlay.children[i].style.setProperty('user-select', 'none');
-    overlay.children[i].style.setProperty('-o-user-select', 'none');
-    overlay.children[i].style.setProperty('-webkit-user-select', 'none');
-    overlay.children[i].style.setProperty('-khtml-user-select', 'none');
-    overlay.children[i].style.setProperty('-moz-user-select', '-moz-none');
+  for (var i = 0; i < document.body.children.length; i++) {
+    document.body.children[i].style.setProperty('user-select', 'none');
+    document.body.children[i].style.setProperty('-o-user-select', 'none');
+    document.body.children[i].style.setProperty('-webkit-user-select', 'none');
+    document.body.children[i].style.setProperty('-khtml-user-select', 'none');
+    document.body.children[i].style.setProperty('-moz-user-select', '-moz-none');
   }
   
   var touches = [];
@@ -400,7 +400,7 @@ javascript:(function() {
   shootJoystickBG.addEventListener('touchmove', handleShootTouchMove);
   shootJoystickBG.addEventListener('touchend', handleShootTouchEnd);
 
-  fieldJoystickCircle.addEventListener('touchstart', handleFieldTouchStart);
+fieldJoystickCircle.addEventListener('touchstart', handleFieldTouchStart);
   fieldJoystickCircle.addEventListener('touchmove', handleFieldTouchMove);
   fieldJoystickCircle.addEventListener('touchend', handleFieldTouchEnd);
   fieldJoystickBG.addEventListener('touchstart', handleFieldTouchStart);
@@ -412,4 +412,4 @@ javascript:(function() {
   document.body.addEventListener('touchstart', handleScreenTouchStart);
   document.body.addEventListener('touchmove', handleScreenTouchMove);
   document.body.addEventListener('touchend', handleScreenTouchEnd);
-})();
+})();q
