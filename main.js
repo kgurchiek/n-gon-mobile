@@ -1,5 +1,10 @@
 javascript:(function() {
   document.body.style.setProperty('touch-action', 'pan-y');
+
+  //for testing in blank pages
+  if (typeof simulation == 'undefined') simulation = {}
+  if (typeof input == 'undefined') input = {}
+  if (typeof m == 'undefined') m = {}
   
   simulation.mouseDistance = 75;
   simulation.mouseAngle = 0;
@@ -194,11 +199,18 @@ javascript:(function() {
 
   const handleScreenTouchStart = (e) => {
     if (touches.length < e.touches.length) {
-      isDraggingScreen = true;
-      touches.push("screen");
-      simulation.mousePos.x = e.touches[touches.indexOf("screen")].clientX;
-      simulation.mousePos.y = e.touches[touches.indexOf("screen")].clientY;
-      setCrosshairPoint();
+      const gunsRect = document.getElementById('guns').getBoundingClientRect();
+      const dx = e.touches[e.touches.length - 1].clientX - gunsRect.x;
+      const dy = e.touches[e.touches.length - 1].clientY - gunsRect.y;
+      if (dx >= 0 && dx <= gunsRect.width && dy >= 0 && dy <= gunsRect.height) {
+        handleGunsTouchStart(e);
+      } else {
+        isDraggingScreen = true;
+        touches.push("screen");
+        simulation.mousePos.x = e.touches[touches.indexOf("screen")].clientX;
+        simulation.mousePos.y = e.touches[touches.indexOf("screen")].clientY;
+        setCrosshairPoint();
+      }
     }
   };
   
@@ -266,8 +278,11 @@ javascript:(function() {
     }
   };
 
+  const handleGunsTouchStart = (e) => {
+    simulation.nextGun();
+  };
+
   const handleScreenTouchMove = (e) => {
-    console.log(touches);
     if (isDraggingScreen) {
       simulation.mousePos.x = e.touches[touches.indexOf("screen")].clientX;
       simulation.mousePos.y = e.touches[touches.indexOf("screen")].clientY;
@@ -387,6 +402,7 @@ javascript:(function() {
     fieldJoystickCircle.style.top = `${fieldJoystickStartPos.y}px`;
     fieldJoystickCircle.style.left = `${fieldJoystickStartPos.x}px`;
   };
+  
   moveJoystickCircle.addEventListener('touchstart', handleMoveTouchStart);
   moveJoystickCircle.addEventListener('touchmove', handleMoveTouchMove);
   moveJoystickCircle.addEventListener('touchend', handleMoveTouchEnd);
@@ -408,8 +424,7 @@ fieldJoystickCircle.addEventListener('touchstart', handleFieldTouchStart);
   fieldJoystickBG.addEventListener('touchend', handleFieldTouchEnd);
 
   pauseButton.addEventListener('touchstart', handlePauseTouchStart);
-
   document.body.addEventListener('touchstart', handleScreenTouchStart);
   document.body.addEventListener('touchmove', handleScreenTouchMove);
   document.body.addEventListener('touchend', handleScreenTouchEnd);
-})();q
+})();
