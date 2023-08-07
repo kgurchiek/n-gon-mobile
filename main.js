@@ -311,8 +311,8 @@ javascript:(function() {
 
       input.right = angle > -Math.PI * 2/5 && angle < Math.PI * 2/5;
       input.left = angle > Math.PI * 3/5 || angle < -Math.PI * 3/5;
-      input.down = angle > Math.PI / 4 && angle < Math.PI * 3/4 && distanceFromCenter > moveJoystickBounds / 3;
-      input.up = angle > -Math.PI * 3/4 && angle < -Math.PI / 4 && distanceFromCenter > moveJoystickBounds / 3;
+      input.down = angle > Math.PI / 4 && angle < Math.PI * 3/4 && distanceFromCenter > moveJoystickBounds / 2;
+      input.up = angle > -Math.PI * 3/4 && angle < -Math.PI / 4 && distanceFromCenter > moveJoystickBounds / 2;
     }
   };
 
