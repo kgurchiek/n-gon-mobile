@@ -2,7 +2,7 @@
 Allows you to play [n-gon](https://landgreen.github.io/sidescroller) on a mobile device
 
 ## Usage
-Create a website bookmark in your browser and paste this script as the url. Then open [n-gon](https://landgreen.github.io/sidescroller) and click on the bookmark, and gamepad controls will be enabled.
+Create a website bookmark in your browser and paste this script as the url. Then open [n-gon](https://landgreen.github.io/sidescroller) and click on the bookmark, and mobile controls will appear on-screen.
 ```js
 javascript: (async () => { const scriptText = await (await fetch('https://raw.githubusercontent.com/kgurchiek/n-gon-mobile/main/main.js')).text(); var script = document.createElement('script'); script.type = 'text/javascript'; script.textContent = scriptText; document.head.appendChild(script); })();
 ```
