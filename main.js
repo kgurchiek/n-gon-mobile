@@ -67,19 +67,19 @@ javascript:(function() {
   
   const moveJoystickStartPos = {
     x: window.innerWidth / 5,
-    y: window.innerHeight * 0.8
+    y: window.innerHeight * 0.75
   }
   const moveJoystickBounds = 75;
 
   const shootJoystickStartPos = {
     x: window.innerWidth * 4 / 5,
-    y: window.innerHeight * 0.8
+    y: window.innerHeight * 0.75
   }
   const shootJoystickBounds = 75;
 
   const fieldJoystickStartPos = {
-    x: window.innerWidth * 9 / 10,
-    y: window.innerHeight * 0.6
+    x: window.innerWidth * 0.85,
+    y: window.innerHeight * 0.3
   }
   const fieldJoystickBounds = 50;
 
