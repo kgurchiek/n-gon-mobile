@@ -370,7 +370,7 @@ javascript:(function() {
 
   const handleScreenTouchEnd = () => {
     if (touches.includes("screen")) {
-      isdraggingScreen = false;
+      isDraggingScreen = false;
       touches.splice(touches.indexOf("screen"), 1);
     }
   };
