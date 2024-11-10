@@ -1,4 +1,5 @@
 javascript:(function() {
+  if (!ctx.reset) ctx.reset = () => {};
   document.body.style.setProperty('touch-action', 'pan-y');
 
   //for testing in blank pages
